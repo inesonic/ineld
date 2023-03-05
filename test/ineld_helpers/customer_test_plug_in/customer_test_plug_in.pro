@@ -41,10 +41,20 @@ INCLUDEPATH = $${PWD}/../../../ineld/include/ $${PWD}/../../../ineld/customer_in
 unix {
     CONFIG(debug, debug|release) {
         LIBS += -L$${LD_BASE}/build/debug/ -lineld
-        PRE_TARGETDEPS += $${LD_BASE}/build/debug/libineld.so
+
+        macx {
+            PRE_TARGETDEPS += $${LD_BASE}/build/debug/libineld.dylib
+        } else {
+            PRE_TARGETDEPS += $${LD_BASE}/build/debug/libineld.so
+        }
     } else {
         LIBS += -L$${LD_BASE}/build/release/ -lineld
-        PRE_TARGETDEPS += $${LD_BASE}/build/release/libineld.so
+
+        macx {
+            PRE_TARGETDEPS += $${LD_BASE}/build/release/libineld.dylib
+        } else {
+            PRE_TARGETDEPS += $${LD_BASE}/build/release/libineld.so
+        }
     }
 }
 
