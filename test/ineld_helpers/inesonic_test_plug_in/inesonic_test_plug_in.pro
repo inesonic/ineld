@@ -33,59 +33,71 @@ CONFIG += shared embed_manifest_exe c++14
 SOURCES = inesonic_test_plug_in.cpp
 
 ########################################################################################################################
-# Libraries
+# ineld library:
 #
 
-INCLUDEPATH += $${INECONTAINER_INCLUDE}
-INCLUDEPATH += $${INEQCONTAINER_INCLUDE}
-INCLUDEPATH += $${INECBE_INCLUDE}
-INCLUDEPATH += $${INEUTIL_INCLUDE}
-
-LIBS += -L$${INECONTAINER_LIBDIR} -linecontainer
-LIBS += -L$${INEQCONTAINER_LIBDIR} -lineqcontainer
-LIBS += -L$${INECBE_LIBDIR} -linecbe
-LIBS += -L$${INEUTIL_LIBDIR} -lineutil
-
-INELD_BASE = ../../ineld
-INCLUDEPATH += ../../ineld/include
+LD_BASE = $${OUT_PWD}/../../../ineld/
+INCLUDEPATH = $${PWD}/../../../ineld/include/ $${PWD}/../../../ineld/customer_include/
 
 unix {
     CONFIG(debug, debug|release) {
-        LIBS += -L$${INELD_BASE}/build/debug/ -lineld
-        !macx {
-            PRE_TARGETDEPS += $${INELD_BASE}/build/debug/libineld.so
-        } else {
-            PRE_TARGETDEPS += $${INELD_BASE}/build/debug/libineld.dylib
-        }
+        LIBS += -L$${LD_BASE}/build/debug/ -lineld
+        PRE_TARGETDEPS += $${LD_BASE}/build/debug/libineld.so
     } else {
-        LIBS += -L$${INELD_BASE}/build/release/ -lineld
-        !macx {
-            PRE_TARGETDEPS += $${INELD_BASE}/build/release/libineld.so
-        } else {
-            PRE_TARGETDEPS += $${INELD_BASE}/build/release/libineld.dylib
-        }
+        LIBS += -L$${LD_BASE}/build/release/ -lineld
+        PRE_TARGETDEPS += $${LD_BASE}/build/release/libineld.so
     }
 }
 
 win32 {
     CONFIG(debug, debug|release) {
-        LIBS += $${INELD_BASE}/build/Debug/ineld.lib
-        PRE_TARGETDEPS += $${INELD_BASE}/build/Debug/ineld.lib
+        LIBS += $${LD_BASE}/build/Debug/ineld.lib
+        PRE_TARGETDEPS += $${LD_BASE}/build/Debug/ineld.lib
     } else {
-        LIBS += $${INELD_BASE}/build/Release/ineld.lib
-        PRE_TARGETDEPS += $${INELD_BASE}/build/Release/ineld.lib
+        LIBS += $${LD_BASE}/build/Release/ineld.lib
+        PRE_TARGETDEPS += $${LD_BASE}/build/Release/ineld.lib
     }
 }
 
-INCLUDEPATH += $${INEM_INCLUDE}
-LIBS += -L$${INEM_LIBDIR} -linem
+########################################################################################################################
+# Libraries
+#
 
-include("$${SOURCE_ROOT}/libraries/inecontainer/inecontainer.pri")
-include("$${SOURCE_ROOT}/libraries/ineqcontainer/ineqcontainer.pri")
-include("$${SOURCE_ROOT}/libraries/ineutil/ineutil.pri")
-include("$${SOURCE_ROOT}/libraries/inecbe/inecbe.pri")
-include("$${SOURCE_ROOT}/libraries/ineld/ineld.pri")
-include("$${SOURCE_ROOT}/libraries/inem/inem.pri")
+defined(SETTINGS_PRI, var) {
+    include($${SETTINGS_PRI})
+}
+
+INCLUDEPATH += $${INECONTAINER_INCLUDE}
+INCLUDEPATH += $${INEQCONTAINER_INCLUDE}
+INCLUDEPATH += $${INECBE_INCLUDE}
+INCLUDEPATH += $${INEM_INCLUDE}
+INCLUDEPATH += $${INEMAT_INCLUDE}
+INCLUDEPATH += $${INEUTIL_INCLUDE}
+INCLUDEPATH += $${INEUD_INCLUDE}
+INCLUDEPATH += $${INEWH_INCLUDE}
+INCLUDEPATH += $${INECRYPTO_INCLUDE}
+INCLUDEPATH += $${BOOST_INCLUDE}
+
+defined(INEMAT_PRI, var) {
+    include($${INEMAT_PRI})
+}
+
+LIBS += -L$${INECONTAINER_LIBDIR} -linecontainer
+LIBS += -L$${INEQCONTAINER_LIBDIR} -lineqcontainer
+LIBS += -L$${INECBE_LIBDIR} -linecbe
+LIBS += -L$${INEM_LIBDIR} -linem
+LIBS += -L$${INEUTIL_LIBDIR} -lineutil
+LIBS += -L$${INEUD_LIBDIR} -lineud
+LIBS += -L$${INEWH_LIBDIR} -linewh
+LIBS += -L$${INECRYPTO_LIBDIR} -linecrypto
+
+defined(LLVM_PRI, var) {
+    include($${LLVM_PRI})
+}
+
+defined(INEMAT_PRI, var) {
+    include($${INEMAT_PRI})
+}
 
 ########################################################################################################################
 # Locate build intermediate and output products

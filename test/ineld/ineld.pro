@@ -189,26 +189,71 @@ SOURCES = test_ineld.cpp \
           test_chart_axis_format.cpp \
 
 ########################################################################################################################
+# ineld library:
+#
+
+LD_BASE = $${OUT_PWD}/../../ineld/
+INCLUDEPATH = $${PWD}/../../ineld/include/ $${PWD}/../../ineld/customer_include/
+
+unix {
+    CONFIG(debug, debug|release) {
+        LIBS += -L$${LD_BASE}/build/debug/ -lineld
+        PRE_TARGETDEPS += $${LD_BASE}/build/debug/libineld.so
+    } else {
+        LIBS += -L$${LD_BASE}/build/release/ -lineld
+        PRE_TARGETDEPS += $${LD_BASE}/build/release/libineld.so
+    }
+}
+
+win32 {
+    CONFIG(debug, debug|release) {
+        LIBS += $${LD_BASE}/build/Debug/ineld.lib
+        PRE_TARGETDEPS += $${LD_BASE}/build/Debug/ineld.lib
+    } else {
+        LIBS += $${LD_BASE}/build/Release/ineld.lib
+        PRE_TARGETDEPS += $${LD_BASE}/build/Release/ineld.lib
+    }
+}
+
+########################################################################################################################
 # Libraries
 #
 
-include("$${SOURCE_ROOT}/libraries/inecontainer/inecontainer.pri")
-include("$${SOURCE_ROOT}/libraries/ineqcontainer/ineqcontainer.pri")
-include("$${SOURCE_ROOT}/libraries/inecbe/inecbe.pri")
-include("$${SOURCE_ROOT}/libraries/inem/inem.pri")
-include("$${SOURCE_ROOT}/libraries/inemat/inemat.pri")
-include("$${SOURCE_ROOT}/libraries/inemkl/inemkl.pri")
-include("$${SOURCE_ROOT}/libraries/ineud/ineud.pri")
-include("$${SOURCE_ROOT}/libraries/inewh/inewh.pri")
-include("$${SOURCE_ROOT}/libraries/ineld/ineld.pri")
-include("$${SOURCE_ROOT}/libraries/ineutil/ineutil.pri")
-include("$${SOURCE_ROOT}/libraries/inecrypto/inecrypto.pri")
+defined(SETTINGS_PRI, var) {
+    include($${SETTINGS_PRI})
+}
 
-include("$${SOURCE_ROOT}/third_party/llvm.pri")
-include("$${SOURCE_ROOT}/third_party/boost.pri")
-include("$${SOURCE_ROOT}/third_party/operating_system.pri")
-include("$${SOURCE_ROOT}/third_party/mkl.pri")
-include("$${SOURCE_ROOT}/third_party/ipp.pri")
+INCLUDEPATH += $${INECONTAINER_INCLUDE}
+INCLUDEPATH += $${INEQCONTAINER_INCLUDE}
+INCLUDEPATH += $${INECBE_INCLUDE}
+INCLUDEPATH += $${INEM_INCLUDE}
+INCLUDEPATH += $${INEMAT_INCLUDE}
+INCLUDEPATH += $${INEUTIL_INCLUDE}
+INCLUDEPATH += $${INEUD_INCLUDE}
+INCLUDEPATH += $${INEWH_INCLUDE}
+INCLUDEPATH += $${INECRYPTO_INCLUDE}
+INCLUDEPATH += $${BOOST_INCLUDE}
+
+defined(INEMAT_PRI, var) {
+    include($${INEMAT_PRI})
+}
+
+LIBS += -L$${INECONTAINER_LIBDIR} -linecontainer
+LIBS += -L$${INEQCONTAINER_LIBDIR} -lineqcontainer
+LIBS += -L$${INECBE_LIBDIR} -linecbe
+LIBS += -L$${INEM_LIBDIR} -linem
+LIBS += -L$${INEUTIL_LIBDIR} -lineutil
+LIBS += -L$${INEUD_LIBDIR} -lineud
+LIBS += -L$${INEWH_LIBDIR} -linewh
+LIBS += -L$${INECRYPTO_LIBDIR} -linecrypto
+
+defined(LLVM_PRI, var) {
+    include($${LLVM_PRI})
+}
+
+defined(INEMAT_PRI, var) {
+    include($${INEMAT_PRI})
+}
 
 ########################################################################################################################
 # Locate build intermediate and output products

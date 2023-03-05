@@ -1658,8 +1658,24 @@ PRIVATE_HEADERS = source/ld_configure_basic_functions.h \
 HEADERS = $$CUSTOMER_HEADERS $$API_HEADERS $$PRIVATE_HEADERS
 
 ########################################################################################################################
+# LLVM
+#
+
+defined(LLMV_PRI, var) {
+    include($${LLVM_PRI})
+}
+
+DEFINES += "LLVM_VERSION=$${LLVM_VERSION}"
+DEFINES += LLVM_DEVELOPMENT_BINARY_PATH=\\\"$${LLVM_INSTALL}/bin\\\"
+DEFINES += LLVM_DEVELOPMENT_LIBRARY_PATHS=\\\"$${LLVM_INSTALL}/lib\\\"
+
+########################################################################################################################
 # Libraries
 #
+
+defined(SETTINGS_PRI, var) {
+    include($${SETTINGS_PRI})
+}
 
 INCLUDEPATH += $${INECONTAINER_INCLUDE}
 INCLUDEPATH += $${INEQCONTAINER_INCLUDE}
