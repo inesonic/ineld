@@ -1661,6 +1661,10 @@ HEADERS = $$CUSTOMER_HEADERS $$API_HEADERS $$PRIVATE_HEADERS
 # LLVM
 #
 
+defined(SETTINGS_PRI, var) {
+    include($${SETTINGS_PRI})
+}
+
 defined(LLMV_PRI, var) {
     include($${LLVM_PRI})
 }
@@ -1672,10 +1676,6 @@ DEFINES += LLVM_DEVELOPMENT_LIBRARY_PATHS=\\\"$${LLVM_INSTALL}/lib\\\"
 ########################################################################################################################
 # Libraries
 #
-
-defined(SETTINGS_PRI, var) {
-    include($${SETTINGS_PRI})
-}
 
 INCLUDEPATH += $${INECONTAINER_INCLUDE}
 INCLUDEPATH += $${INEQCONTAINER_INCLUDE}
