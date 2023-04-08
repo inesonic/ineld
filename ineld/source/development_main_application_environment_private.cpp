@@ -55,7 +55,7 @@ QString DevelopmentMainApplicationEnvironmentPrivate::applicationRoot() const {
 
     #if (defined(Q_OS_WIN))
 
-        result = QFileInfo(executableDirectory() + "/../../").canonicalPath();
+        result = QFileInfo(executableDirectory() + "/../../../").canonicalPath();
 
     #elif (defined(Q_OS_LINUX))
 

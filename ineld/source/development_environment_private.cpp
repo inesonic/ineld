@@ -121,7 +121,7 @@ QList<QString> DevelopmentEnvironmentPrivate::headerSearchPaths() const {
 
 QList<QString> DevelopmentEnvironmentPrivate::pchSearchPaths() const {
     QList<QString> result;
-    result << QFileInfo(applicationRoot() + "/libraries/inem/pch/").canonicalFilePath();
+    result << QFileInfo(applicationRoot() + "/libraries/inem/inem/pch/").canonicalFilePath();
 
     return result;
 }
