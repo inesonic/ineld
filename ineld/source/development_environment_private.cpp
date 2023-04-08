@@ -82,25 +82,30 @@ QString DevelopmentEnvironmentPrivate::compilerRoot() const {
 QString DevelopmentEnvironmentPrivate::compilerResourceDirectory() const {
     QString result;
 
-    #if (defined(Q_OS_WIN))
+    #if (false)
+        // No longer needed
 
-        if (QFile("C:/opt/llvm-5.0.1/release").exists()) {
-            result = "C:\\opt\\llvm-5.0.1\\release\\lib\\clang\\5.0.1\\";
-        } else {
-            result = "C:\\opt\\llvm-5.0.1\\debug\\lib\\clang\\5.0.01\\";
-        }
+        #if (defined(Q_OS_WIN))
 
-    #elif (defined(Q_OS_LINUX) || defined(Q_OS_DARWIN))
+            if (QFile("C:/opt/llvm-5.0.1/release").exists()) {
+                result = "C:\\opt\\llvm-5.0.1\\release\\lib\\clang\\5.0.1\\";
+            } else {
+                result = "C:\\opt\\llvm-5.0.1\\debug\\lib\\clang\\5.0.01\\";
+            }
 
-        if (QFile("/opt/llvm-5.0.1/debug").exists()) {
-            result = "/opt/llvm-5.0.1/debug/lib/clang/5.0.1/";
-        } else {
-            result = "/opt/llvm-5.0.1/release/lib/clang/5.0.1/";
-        }
+        #elif (defined(Q_OS_LINUX) || defined(Q_OS_DARWIN))
 
-    #else
+            if (QFile("/opt/llvm-5.0.1/debug").exists()) {
+                result = "/opt/llvm-5.0.1/debug/lib/clang/5.0.1/";
+            } else {
+                result = "/opt/llvm-5.0.1/release/lib/clang/5.0.1/";
+            }
 
-        #error Unknown platform.
+        #else
+
+            #error Unknown platform.
+
+        #endif
 
     #endif
 
@@ -112,8 +117,8 @@ QList<QString> DevelopmentEnvironmentPrivate::headerSearchPaths() const {
     QString sourceTopLevelDirectory = sourceRoot();
 
     QList<QString> result;
-    result << QFileInfo(sourceTopLevelDirectory + "/libraries/inem/customer_include/").canonicalFilePath()
-           << QFileInfo(sourceTopLevelDirectory + "/libraries/inem/include/").canonicalFilePath();
+    result << QFileInfo(sourceTopLevelDirectory + "/../libraries/inem/inem/customer_include/").canonicalFilePath()
+           << QFileInfo(sourceTopLevelDirectory + "/../libraries/inem/inem/include/").canonicalFilePath();
 
     return result;
 }
@@ -121,7 +126,24 @@ QList<QString> DevelopmentEnvironmentPrivate::headerSearchPaths() const {
 
 QList<QString> DevelopmentEnvironmentPrivate::pchSearchPaths() const {
     QList<QString> result;
-    result << QFileInfo(applicationRoot() + "/libraries/inem/inem/pch/").canonicalFilePath();
+
+    #if (defined(Q_OS_WIN))
+
+        result << QFileInfo(applicationRoot() + "/libraries/inem/inem/pch/").canonicalFilePath();
+
+    #elif (defined(Q_OS_DARWIN))
+
+        result << QFileInfo(applicationRoot() + "/../libraries/inem/inem/pch/").canonicalFilePath();
+
+    #elif (defined(Q_OS_LINUX))
+
+        result << QFileInfo(applicationRoot() + "/libraries/inem/inem/pch/").canonicalFilePath();
+
+    #else
+
+        #error Unknown platform.
+
+    #endif
 
     return result;
 }
@@ -134,8 +156,8 @@ QList<QString> DevelopmentEnvironmentPrivate::librarySearchPaths(const QString& 
 
         QString root = Ld::Environment::applicationRoot();
 
-        if (!addPathIfExists(result, root + "/libraries/inem/build/Debug/", "inem.lib")) {
-            addPathIfExists(result, root + "/libraries/inem/build/Release/", "inem.lib");
+        if (!addPathIfExists(result, root + "/libraries/inem/inem/build/Debug/", "inem.lib")) {
+            addPathIfExists(result, root + "/libraries/inem/inem/build/Release/", "inem.lib");
         }
 
         if (!addPathIfExists(result, root + "/libraries/inert/build/Debug/", "inert.lib")) {
@@ -156,10 +178,10 @@ QList<QString> DevelopmentEnvironmentPrivate::librarySearchPaths(const QString& 
         QList<QString> result = QString(LLVM_DEVELOPMENT_LIBRARY_PATHS).split(";");
 
         QString root = Ld::Environment::applicationRoot();
-        if (QFile(root + "/libraries/inem/build/debug").exists()) {
-            result << QFileInfo(root + "/libraries/inem/build/debug/").canonicalFilePath();
+        if (QFile(root + "/../libraries/inem/inem/build/debug").exists()) {
+            result << QFileInfo(root + "/../libraries/inem/inem/build/debug/").canonicalFilePath();
         } else {
-            result << QFileInfo(root + "/libraries/inem/build/release/").canonicalFilePath();
+            result << QFileInfo(root + "/../libraries/inem/inem/build/release/").canonicalFilePath();
         }
 
     #else
@@ -197,7 +219,7 @@ QList<QString> DevelopmentEnvironmentPrivate::standardStaticLibraries(const QStr
 
         if (overrideRuntime.isEmpty()) {
             // On Windows, we use a different runtime that combines inem with a few hooks that avoid the need for
-            // and of Microsoft's non-distributable libraries.
+            // Microsoft's non-distributable libraries.
 
             result << "inert";
         } else {
@@ -261,27 +283,59 @@ QList<QString> DevelopmentEnvironmentPrivate::runTimeLibrarySearchPaths() const 
             result << QFileInfo(root + "/libraries/inem/build/release/").canonicalFilePath();
         }
 
-        if (QFile("/opt/llvm-10.0.0/debug/lib/").exists()) {
-            result << "/opt/llvm-10.0.0/debug/lib/";
-        } else {
-            result << "/opt/llvm-10.0.0/release/lib/";
-        }
+        #if (LLVM_VERSION == 100000)
+
+            if (QFile("/opt/llvm-10.0.0/debug/lib/").exists()) {
+                result << "/opt/llvm-10.0.0/debug/lib/";
+            } else {
+                result << "/opt/llvm-10.0.0/release/lib/";
+            }
+
+        #elif (LLVM_VERSION == 140000)
+
+            if (QFile("/opt/llvm-14.0.0/debug/lib/").exists()) {
+                result << "/opt/llvm-14.0.0/debug/lib/";
+            } else {
+                result << "/opt/llvm-14.0.0/release/lib/";
+            }
+
+        #else
+
+            #error Unknown LLVM Version.
+
+        #endif
 
     #elif (defined(Q_OS_DARWIN))
 
         QString root = Ld::Environment::applicationRoot();
 
-        if (QFile(root + "/libraries/inem/build/debug").exists()) {
-            result << QFileInfo(root + "/libraries/inem/build/debug/").canonicalFilePath();
+        if (QFile(root + "/../libraries/inem/inem/build/debug").exists()) {
+            result << QFileInfo(root + "/../libraries/inem/inem/build/debug/").canonicalFilePath();
         } else {
-            result << QFileInfo(root + "/libraries/inem/build/release/").canonicalFilePath();
+            result << QFileInfo(root + "/../libraries/inem/inem/build/release/").canonicalFilePath();
         }
 
-        if (QFile("/opt/llvm-10.0.0/debug/lib/").exists()) {
-            result << "/opt/llvm-10.0.0/debug/lib/";
-        } else {
-            result << "/opt/llvm-10.0.0/release/lib/";
-        }
+        #if (LLVM_VERSION == 100000)
+
+            if (QFile("/opt/llvm-10.0.0/debug/lib/").exists()) {
+                result << "/opt/llvm-10.0.0/debug/lib/";
+            } else {
+                result << "/opt/llvm-10.0.0/release/lib/";
+            }
+
+        #elif (LLVM_VERSION == 140000)
+
+            if (QFile("/opt/llvm-14.0.0/debug/lib/").exists()) {
+                result << "/opt/llvm-14.0.0/debug/lib/";
+            } else {
+                result << "/opt/llvm-14.0.0/release/lib/";
+            }
+
+        #else
+
+            #error Unknown LLVM Version.
+
+        #endif
 
     #elif (!defined(Q_OS_WIN))
 

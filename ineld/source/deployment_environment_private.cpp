@@ -101,19 +101,26 @@ QString DeploymentEnvironmentPrivate::compilerRoot() const {
 
 QString DeploymentEnvironmentPrivate::compilerResourceDirectory() const {
     QString result;
-    QString root = Ld::Environment::applicationRoot();
 
-    #if (defined(Q_OS_WIN) || defined(Q_OS_LINUX))
+    #if (false)
 
-        result = QFileInfo(root + "/lib/clang/5.0.1/").absoluteFilePath();
+        // No longer needed
 
-    #elif (defined(Q_OS_DARWIN))
+        QString root = Ld::Environment::applicationRoot();
 
-        result = QFileInfo(root + "/Contents/Resources/lib/clang/5.0.1/").absoluteFilePath();
+        #if (defined(Q_OS_WIN) || defined(Q_OS_LINUX))
 
-    #else
+            result = QFileInfo(root + "/lib/clang/5.0.1/").absoluteFilePath();
 
-        #error Unknown platform.
+        #elif (defined(Q_OS_DARWIN))
+
+            result = QFileInfo(root + "/Contents/Resources/lib/clang/5.0.1/").absoluteFilePath();
+
+        #else
+
+            #error Unknown platform.
+
+        #endif
 
     #endif
 
